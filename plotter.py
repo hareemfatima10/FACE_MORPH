@@ -1,3 +1,4 @@
+%%writefile /content/face_morpher_plus/plotter.py
 """
 Plot and save images
 """
@@ -61,7 +62,7 @@ class Plotter(object):
 
     if not os.path.exists(folder):
       os.makedirs(folder)
-    self.filepath = os.path.join(folder, 'frame{0:03d}.png')
+    self.filepath = os.path.join(folder, 'd.png')
     self.do_save = True
 
   @check_do_save
@@ -73,7 +74,7 @@ class Plotter(object):
       filename = self.out_filename
 
     mpimg.imsave(filename, bgr2rgb(img))
-    print(filename + ' saved')
+    #print(filename + 'm saved')
 
   @check_do_plot
   def plot_one(self, img, pts=None):
