@@ -249,3 +249,11 @@ def morpher(imgpaths, width=500, height=600, num_frames=20, fps=10,
   
   img_result=cv2.imread("/content/output/d.png")
   return img_result
+
+def face_morph(input_images):
+  #src- images , dest- avatar images
+  face_morph_arr = []
+  for index, tup in enumerate(input_images):
+    res = morpher([tup[0], tup[1]])
+    face_morph_arr.append(res)
+  return face_morph_arr
