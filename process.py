@@ -1,3 +1,4 @@
+
 """
 ::
 
@@ -79,17 +80,18 @@ def calc_angle(point_s,point_e):
   return angle
 
 def rotate(image, angle, center=None, scale=1.0):
+    print(center)
     (h, w) = image.shape[:2]
     if center is None:
-        center = (w // 2, h // 2)
-
+        center = (int(w // 2), int(h // 2))
+    center=(float(center[0]),float(center[1])) ##error
     M = cv2.getRotationMatrix2D(center, angle, scale)
 
     rotated = cv2.warpAffine(image, M, (w, h))
     return rotated
 
 def load_image_points(path, size):
-  img = cv2.imread(path)
+  img = path
   points = locator.face_points(img)
   if len(points) == 0:
     print('No face in %s' % path)
@@ -109,6 +111,7 @@ def load_valid_image_points(imgpaths, size):
       print(path)
       yield (img, points)
 
+'''
 def list_imgpaths(images_folder=None, src_image=None, dest_image=None):
   if images_folder is None:
     yield src_image
@@ -119,6 +122,7 @@ def list_imgpaths(images_folder=None, src_image=None, dest_image=None):
          fname.lower().endswith('.png') or
          fname.lower().endswith('.jpeg')):
         yield os.path.join(images_folder, fname)
+'''
 
 def alpha_image(img, points):
   mask = blender.mask_from_points(img.shape[:2], points)
@@ -162,7 +166,7 @@ def process_edge(src_img, dest_img, width=500, height=600):
   img = Image.fromarray(np.uint8(dest_img[:,:,-1])).resize((int(width/1.1), int(height/1.1)))
   img_canvas.paste(img, BLUR_RADIUS)
   img = np.asarray(img_canvas)
-  img.flags.writeable = True
+  #img.flags.writeable = True.  #error
   img = cv2.GaussianBlur(img, BLUR_RADIUS, 0)
   img = np.array([img, img, img]).transpose((1, 2, 0)).astype(np.float64)
   result_img = src_img[:,:,:3].copy().astype(np.float64)
@@ -225,6 +229,7 @@ def morph(src_img, src_points, dest_img, dest_points,
   plt.plot_one(dest_img)
   video.write(dest_img, stall_frames)
   plt.show()
+  
 
 def morpher(imgpaths, width=500, height=600, num_frames=20, fps=10,
             out_frames=None, out_video=None, alpha=False, plot=False):
@@ -235,23 +240,12 @@ def morpher(imgpaths, width=500, height=600, num_frames=20, fps=10,
   video = videoer.Video(out_video, fps, width, height)
   images_points_gen = load_valid_image_points(imgpaths, (height, width))
   src_img, src_points = next(images_points_gen)
+  filename=""
   for dest_img, dest_points in images_points_gen:
-    morph(src_img, src_points, dest_img, dest_points, video,
+    filename=morph(src_img, src_points, dest_img, dest_points, video,
           width, height, num_frames, fps, out_frames, out_video, alpha, plot)
     src_img, src_points = dest_img, dest_points
   video.end()
-
-def main():
-  args = docopt(__doc__, version='Face Morpher Plus 1.0')
-  verify_args(args)
-  args.alpha = True
-
-  morpher(list_imgpaths(args['--images'], args['--src'], args['--dest']),
-          int(args['--width']), int(args['--height']),
-          int(args['--num']), int(args['--fps']),
-          args['--out_frames'], args['--out_video'],
-          args['--alpha'], args['--plot'])
-
-
-if __name__ == "__main__":
-  main()
+  
+  img_result=cv2.imread("/content/output/d.png")
+  return img_result
