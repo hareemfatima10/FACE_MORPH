@@ -1,4 +1,3 @@
-%%writefile /content/face_morpher_plus/plotter.py
 """
 Plot and save images
 """
